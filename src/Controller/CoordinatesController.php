@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Repository\ResolvedAddressRepository;
-use App\Service\GeocoderInterface;
+use App\Service\GeocoderService;
 use App\ValueObject\Address;
 use GuzzleHttp\Client;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,19 +16,12 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CoordinatesController extends AbstractController
 {
-    private GeocoderInterface $geocoder;
-
-    public function __construct(GeocoderInterface $geocoder)
-    {
-        $this->geocoder = $geocoder;
-    }
-
     /**
      * @Route(path="/coordinates", name="geocode")
      * @param Request $request
      * @return Response
      */
-    public function geocodeAction(Request $request, ResolvedAddressRepository $repository): Response
+    public function geocodeAction(Request $request, ResolvedAddressRepository $repository, GeocoderService $geocoderService): Response
     {
         $country = $request->get('countryCode', 'lt');
         $city = $request->get('city', 'vilnius');
@@ -39,13 +32,16 @@ class CoordinatesController extends AbstractController
 
         $row = $repository->getByAddress($address);
 
-        $coordinates = $this->geocoder->geocode($address);
-
-        if (null === $coordinates) {
-            return new JsonResponse([]);
+        if ($row !== null) {
+            return new JsonResponse(['lat' => (float)$row->getLat(), 'lng' => (float)$row->getLng()]);
         }
 
+        $coordinates = $geocoderService->handle('Google', $address) ?? $geocoderService->handle('Here', $address);
         $repository->saveResolvedAddress($address, $coordinates);
+
+        if ($coordinates === null) {
+            return new JsonResponse([]);
+        }
 
         return new JsonResponse(['lat' => $coordinates->getLat(), 'lng' => $coordinates->getLng()]);
     }
@@ -57,7 +53,7 @@ class CoordinatesController extends AbstractController
      */
     public function gmapsAction(Request $request): Response
     {
-        $country = $request->get('country', 'lithuania');
+        $country = $request->get('country', 'lt');
         $city = $request->get('city', 'vilnius');
         $street = $request->get('street', 'jasinskio 16');
         $postcode = $request->get('postcode', '01112');
@@ -98,7 +94,7 @@ class CoordinatesController extends AbstractController
      */
     public function hmapsAction(Request $request): Response
     {
-        $country = $request->get('country', 'lithuania');
+        $country = $request->get('country', 'lt');
         $city = $request->get('city', 'vilnius');
         $street = $request->get('street', 'jasinskio 16');
         $postcode = $request->get('postcode', '01112');

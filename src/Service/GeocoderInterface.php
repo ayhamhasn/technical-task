@@ -9,5 +9,7 @@ use App\ValueObject\Coordinates;
 
 interface GeocoderInterface
 {
+    public function supports(string $type): bool;
+
     public function geocode(Address $address): ?Coordinates;
 }

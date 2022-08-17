@@ -13,4 +13,9 @@ class DummyGeocoder implements GeocoderInterface
     {
         return new Coordinates(55.90742079144914, 21.135541627577837);
     }
+
+    public function supports(string $type): bool
+    {
+        return false;
+    }
 }
