@@ -1,0 +1,13 @@
+default:
+  suites:
+    coordinates:
+      formatter:
+        name: coordinates
+      filters:
+        tags: ~@broken
+      contexts:
+        - CommonContext:
+          - doctrine: "@doctrine"
+        - ApiFeatureContext:
+          - doctrine: "@doctrine"
+          - parameters:
