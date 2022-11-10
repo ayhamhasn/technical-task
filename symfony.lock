@@ -140,9 +140,6 @@
     "psr/event-dispatcher": {
         "version": "1.0.0"
     },
-    "psr/http-client": {
-        "version": "1.0.1"
-    },
     "psr/http-message": {
         "version": "1.0.1"
     },
@@ -308,6 +305,19 @@
     },
     "symfony/string": {
         "version": "v5.2.3"
+    },
+    "symfony/translation": {
+        "version": "5.2",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "3.3",
+            "ref": "2ad9d2545bce8ca1a863e50e92141f0b9d87ffcd"
+        },
+        "files": [
+            "config/packages/translation.yaml",
+            "translations/.gitignore"
+        ]
     },
     "symfony/var-dumper": {
         "version": "v5.2.3"
