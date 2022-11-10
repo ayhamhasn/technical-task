@@ -1,0 +1,5 @@
+services:
+    App\Tests\Behat\DemoContext:
+        public: true
+        arguments:
+            - "@kernel"
