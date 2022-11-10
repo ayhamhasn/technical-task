@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Repository\ResolvedAddressRepository;
 use App\ValueObject\Address;
 use App\ValueObject\Coordinates;
 use GuzzleHttp\Client;
@@ -14,7 +15,7 @@ class HereGeocoder implements GeocoderInterface
         return 'Here' === $type;
     }
 
-    public function geocode(Address $address): ?Coordinates
+    public function geocode(Address $address, ResolvedAddressRepository $resolvedAddressRepository): ?Coordinates
     {
         $apiKey = $_ENV["HEREMAPS_GEOCODING_API_KEY"];
 
@@ -42,6 +43,8 @@ class HereGeocoder implements GeocoderInterface
             return null;
         }
 
-        return new Coordinates( $firstItem['position'] ['lat'], $firstItem['position'] ['lng']);
+        $coordinate = new Coordinates( $firstItem['position'] ['lat'], $firstItem['position'] ['lng']);
+        $resolvedAddressRepository->saveResolvedAddress($address, $coordinate);
+        return $coordinate;
     }
 }

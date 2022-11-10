@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Repository\ResolvedAddressRepository;
 use App\ValueObject\Address;
 use App\ValueObject\Coordinates;
 use GuzzleHttp\Client;
@@ -13,7 +14,7 @@ class GoogleGeocoder implements GeocoderInterface
         return 'Google' === $type;
     }
 
-    public function geocode(Address $address): ?Coordinates
+    public function geocode(Address $address, ResolvedAddressRepository $resolvedAddressRepository): ?Coordinates
     {
         $apiKey = $_ENV["GOOGLE_GEOCODING_API_KEY"];
 
@@ -42,6 +43,8 @@ class GoogleGeocoder implements GeocoderInterface
             return null;
         }
 
-        return new Coordinates( $firstResult['geometry'] ['location'] ['lat'], $firstResult['geometry'] ['location'] ['lng']);
+        $coordinate = new Coordinates( $firstResult['geometry'] ['location'] ['lat'], $firstResult['geometry'] ['location'] ['lng']);
+        $resolvedAddressRepository->saveResolvedAddress($address, $coordinate);
+        return $coordinate;
     }
 }

@@ -20,6 +20,20 @@ class GetCoordinatesTest extends WebTestCase
         self::assertJsonStringEqualsJsonString(json_encode(['lat' => 54.6878265, 'lng' => 25.2609295]), $client->getResponse()->getContent());
     }
 
+    public function testGetCoordinatesAnotherAddress(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/coordinates', [
+            'countryCode' => 'de',
+            'city' => 'berlin',
+            'street' => 'ritterlandweg 20',
+            'postcode' => '13409',
+        ]);
+
+        self::assertEquals(200, $client->getResponse()->getStatusCode());
+        self::assertJsonStringEqualsJsonString(json_encode(['lat' => 52.560218, 'lng' => 13.3718507]), $client->getResponse()->getContent());
+    }
+
     public function testGetCoordinatesForGoogle(): void
     {
         $client = static::createClient();

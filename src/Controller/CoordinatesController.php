@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Yaml\Yaml;
 
 class CoordinatesController extends AbstractController
 {
@@ -21,7 +22,7 @@ class CoordinatesController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function geocodeAction(Request $request, ResolvedAddressRepository $repository, GeocoderService $geocoderService): Response
+    public function geocodeAction(Request $request, ResolvedAddressRepository $resolvedAddressRepository, GeocoderService $geocoderService): Response
     {
         $country = $request->get('countryCode', 'lt');
         $city = $request->get('city', 'vilnius');
@@ -30,14 +31,17 @@ class CoordinatesController extends AbstractController
 
         $address = new Address($country, $city, $street, $postcode);
 
-        $row = $repository->getByAddress($address);
+        $geocoders = Yaml::parse(
+            file_get_contents(__DIR__.'/../../config/geocoder.yaml'));
 
-        if ($row !== null) {
-            return new JsonResponse(['lat' => (float)$row->getLat(), 'lng' => (float)$row->getLng()]);
+        $coordinates = null;
+
+        foreach ($geocoders as $geocoder) {
+            $coordinates = $geocoderService->handle($geocoder, $address, $resolvedAddressRepository);
+            if ($coordinates !== null) {
+               break;
+            }
         }
-
-        $coordinates = $geocoderService->handle('Google', $address) ?? $geocoderService->handle('Here', $address);
-        $repository->saveResolvedAddress($address, $coordinates);
 
         if ($coordinates === null) {
             return new JsonResponse([]);
