@@ -65,8 +65,6 @@ class ApiFeatureContext implements Context
     private $data = [];
 
 
-############# HELPER METHODS #############
-
     public function setKernel(KernelInterface $kernel)
     {
         $this->kernel = $kernel;
@@ -77,8 +75,6 @@ class ApiFeatureContext implements Context
         return $this->kernel->getContainer();
     }
 
-
-############ BEHAT HOOKS ################
 
     /**
      * @BeforeSuite
@@ -96,7 +92,6 @@ class ApiFeatureContext implements Context
 
     }
 
-############## CONSTRUCT #################
 
     public function __construct($doctrine, array $parameters)
     {
@@ -110,7 +105,7 @@ class ApiFeatureContext implements Context
     private function getGuzzleClient()
     {
         $guzzle_config = [];
-        $guzzle_config['base_uri'] = 'http://localhost:80';
+        $guzzle_config['base_uri'] = 'http://host.docker.internal';
 
         $client = new Client($guzzle_config);
 
@@ -327,8 +322,6 @@ class ApiFeatureContext implements Context
         }
     }
 
-
-############## PRIVATE METHODS #################
 
     private function rewindAndRetriveResponseData()
     {

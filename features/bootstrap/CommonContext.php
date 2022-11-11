@@ -27,9 +27,6 @@ class CommonContext implements Context
         return $this->kernel->getContainer();
     }
 
-
-    ############ BEHAT HOOKS ################
-
     /**
      * @BeforeSuite
      */
