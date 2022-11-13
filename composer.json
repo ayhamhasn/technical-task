@@ -20,8 +20,9 @@
         "symfony/yaml": "5.2.*"
     },
     "require-dev": {
-        "doctrine/doctrine-fixtures-bundle": "^3.4",
         "behat/behat": "^3.11",
+        "doctrine/doctrine-fixtures-bundle": "^3.4",
+        "friends-of-behat/symfony-extension": "^2.0",
         "fzaninotto/faker": "^1.9",
         "guzzlehttp/guzzle": "6.5.3",
         "phpunit/phpunit": "^9.5",

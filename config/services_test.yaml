@@ -1,0 +1,10 @@
+services:
+
+    App\Tests\Behat\CommonContext:
+        public: true
+        arguments:
+            - "@kernel"
+    App\Tests\Behat\ApiFeatureContext:
+        public: true
+        arguments:
+            - "@kernel"

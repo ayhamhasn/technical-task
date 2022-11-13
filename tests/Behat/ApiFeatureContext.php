@@ -1,13 +1,14 @@
 <?php
 
+namespace App\Tests\Behat;
+
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
-
+use Doctrine;
+use GuzzleHttp;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
-
 use PHPUnit\Framework\Assert;
-
 use Symfony\Component\HttpKernel\KernelInterface;
 
 
@@ -24,8 +25,6 @@ class ApiFeatureContext implements Context
      * context constructor through behat.yml.
      */
 
-    # TODOS
-    # TODO - remove hardcoded group image path
 
     /**
      * The request POST payload
@@ -64,38 +63,10 @@ class ApiFeatureContext implements Context
      */
     private $data = [];
 
-
-    public function setKernel(KernelInterface $kernel)
+    public function __construct(KernelInterface $kernel)
     {
         $this->kernel = $kernel;
-    }
-
-    protected function getContainer()
-    {
-        return $this->kernel->getContainer();
-    }
-
-
-    /**
-     * @BeforeSuite
-     */
-    public static function bootstrapApp()
-    {
-
-    }
-
-    /**
-     * @AfterSuite
-     */
-    public static function teardownApp()
-    {
-
-    }
-
-
-    public function __construct($doctrine, array $parameters)
-    {
-        $this->doctrine = $doctrine['doctrine'];
+        $this->doctrine = $kernel->getContainer()->get('doctrine');
     }
 
 
@@ -126,7 +97,7 @@ class ApiFeatureContext implements Context
             'verify' => false,
             'headers' => [
                 'User-Agent' => 'testing/1.0',
-                'Accept'     => 'application/json',
+                'Accept' => 'application/json',
             ],
             'body' => $this->requestPostPayload,
         ];
@@ -163,7 +134,7 @@ class ApiFeatureContext implements Context
         $response = $this->response->getBody()->getContents();
         $responseData = json_decode($response);
 
-        Assert::assertEquals($expectedData,  $responseData);
+        Assert::assertEquals($expectedData, $responseData);
     }
 
     /**
@@ -352,7 +323,7 @@ class ApiFeatureContext implements Context
         if (is_null($target)) {
             $result = true;
         } else {
-          $result = false;
+            $result = false;
         }
 
         Assert::assertEquals(true, $result);

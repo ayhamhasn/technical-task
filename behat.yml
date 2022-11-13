@@ -1,13 +1,13 @@
 default:
   suites:
-    coordinates:
-      formatter:
-        name: coordinates
-      filters:
-        tags: ~@broken
+    default:
       contexts:
-        - CommonContext:
-          - doctrine: "@doctrine"
-        - ApiFeatureContext:
-          - doctrine: "@doctrine"
-          - parameters:
+        - App\Tests\Behat\CommonContext
+        - App\Tests\Behat\ApiFeatureContext
+
+
+  extensions:
+    FriendsOfBehat\SymfonyExtension:
+      bootstrap: tests/bootstrap.php
+      kernel:
+        environment: test
